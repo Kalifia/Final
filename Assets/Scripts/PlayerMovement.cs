@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         Move();
+        Fight();
         CheckRunning();
 
     }
@@ -110,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         if (isRunning)
         {
             movementSpeed = runSpeed;
-            anim.SetTrigger("Run");
+            anim.SetTrigger("Running");
         }
         controller.Move(moveDirection * movementSpeed * Time.deltaTime);
 
@@ -143,6 +144,14 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.W))
         {
             isRunning = false;
+        }
+    }
+
+    private void Fight()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            anim.SetTrigger("Attack");
         }
     }
 }
