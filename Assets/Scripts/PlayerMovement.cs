@@ -36,13 +36,13 @@ public class PlayerMovement : MonoBehaviour
     {
         Move();
         CheckRunning();
-       
+
     }
 
     private void LateUpdate()
     {
         Rotate();
-    } 
+    }
 
     private void Move()
     {
@@ -78,52 +78,71 @@ public class PlayerMovement : MonoBehaviour
             gravity += gravityScale * Physics.gravity.y * Time.deltaTime;
         }
 
+        //anim for jump
+
+        if (gravity > 0)
+        {
+            anim.SetInteger("Gravity", 1);
+        }
+        else if (gravity < -0.3f)
+        {
+            anim.SetInteger("Gravity", -1);
+        }
+        else
+        {
+            anim.SetInteger("Gravity", 0);
+        }
+
         moveDirection.y = gravity;
-
-
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
-        anim.SetTrigger("walkTrigger");
-        float movementSpeed = moveSpeed; //RUNNING //обычная скорость движения
-        if (isRunning) //RUNNING //если включен бег
-        { //RUNNING
+
+        if (Mathf.Abs(inputH) > 0 || Mathf.Abs(inputV) > 0)
+        {
+            anim.SetBool("Walk", true);
+            //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDirection), Time.deltaTime * rotationSpeed);
+        }
+        else
+        {
+            anim.SetBool("Walk", false);
+        }
+
+        float movementSpeed = moveSpeed;
+        if (isRunning)
+        {
             movementSpeed = runSpeed;
-            anim.SetTrigger("runTrigger"); //RUNNING //скорость бега
-        } //RUNNING
+            anim.SetTrigger("Run");
+        }
         controller.Move(moveDirection * movementSpeed * Time.deltaTime);
-        //RUNNING
+
     }
 
     void Rotate()
     {
         float mouseHorizontal = Input.GetAxis("Mouse X");
-
-        //float cameraRotation = mainCamera.transform.rotation.eulerAngles.y;
         print("Camera rotation: " + mainCamera.transform.rotation);
         transform.Rotate(Vector3.up, mouseHorizontal * rotationSpeed * Time.deltaTime);
-        //transform.rotation = Quaternion.Euler(new Vector3(0, cameraRotation, 0));
     }
 
     void CheckRunning()
     {
         if (Input.GetKeyDown(KeyCode.W))
         {
-            float timeSinceLastButton = Time.time - lastTimeButton; //время, которое прошло от последнего нажатия кнопки бега
+            float timeSinceLastButton = Time.time - lastTimeButton;
             if (timeSinceLastButton > runInputDelay)
             {
-                //интервал нажатий превышает заданный - запомнить последнее время
                 lastTimeButton = Time.time;
             }
             else
             {
-                //нажатие произошло в допустимом интервале - включить бег
+
                 lastTimeButton = Time.time;
-                isRunning = true; //включить бег
+                isRunning = true;
             }
         }
 
         if (Input.GetKeyUp(KeyCode.W))
         {
-            isRunning = false; //если кнопка была отжата - выключить бег
+            isRunning = false;
         }
     }
 }

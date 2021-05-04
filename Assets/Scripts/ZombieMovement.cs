@@ -15,7 +15,7 @@ public class ZombieMovement : MonoBehaviour
     [Header("Gameplay config")]
     public float attackRate = 1f;
     public int health = 100;
-    public int damage = 20;
+    public int damage = 5;
 
     ZombieState activeState;
 
@@ -154,11 +154,6 @@ public class ZombieMovement : MonoBehaviour
         {
             return;
         }
-        //if (distanceToPlayer < moveRadius)
-        //{
-        //    ChangeState(ZombieState.MOVE_TO_PLAYER);
-        //    return;
-        //}
 
         float distanceToStart = Vector3.Distance(transform.position, startTransform.position);
         if (distanceToStart <= 0.05f)
@@ -181,7 +176,7 @@ public class ZombieMovement : MonoBehaviour
         Vector3 directionToPlayer = player.transform.position - transform.position;
         Debug.DrawRay(transform.position, directionToPlayer, Color.red);
 
-        float angle = Vector3.Angle(-transform.up, directionToPlayer);
+        float angle = Vector3.Angle(transform.forward, directionToPlayer); //was changed
         if (angle > viewAngle / 2)
         {
             return false;
@@ -206,18 +201,18 @@ public class ZombieMovement : MonoBehaviour
         if (distanceToPlayer < attackRadius)
         {
             ChangeState(ZombieState.ATTACK);
-            //animator.SetFloat("Speed", 0);
+            animator.SetFloat("Speed", 0);
             return;
         }
         if (distanceToPlayer > standbyRadius)
         {
             ChangeState(ZombieState.RETURN);
-            //animator.SetFloat("Speed", 0);
+            animator.SetFloat("Speed", 0);
             return;
         }
 
 
-        //animator.SetFloat("Speed", 1);
+        animator.SetFloat("Speed", 1);
     }
     private void DoAttack()
     {
@@ -231,7 +226,7 @@ public class ZombieMovement : MonoBehaviour
         nextAttack -= Time.deltaTime;
         if (nextAttack <= 0)
         {
-            //sanimator.SetTrigger("Shoot");
+            animator.SetTrigger("Attack");
 
             nextAttack = attackRate;
         }
@@ -258,20 +253,20 @@ public class ZombieMovement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        //Gizmos.color = Color.blue;
-        //Gizmos.DrawWireSphere(transform.position, moveRadius);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, moveRadius);
 
-        //Gizmos.color = Color.red;
-        //Gizmos.DrawWireSphere(transform.position, attackRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRadius);
 
-        //Gizmos.color = Color.yellow;
-        //Gizmos.DrawWireSphere(transform.position, standbyRadius);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, standbyRadius);
 
 
         Gizmos.color = Color.cyan;
-        Vector3 lookDirection = -transform.up;
-        Vector3 leftViewVector = Quaternion.AngleAxis(viewAngle / 2, Vector3.forward) * lookDirection;
-        Vector3 rightViewVector = Quaternion.AngleAxis(-viewAngle / 2, Vector3.forward) * lookDirection;
+        Vector3 lookDirection = transform.forward;//was chanched
+        Vector3 leftViewVector = Quaternion.AngleAxis(viewAngle / 2, Vector3.up) * lookDirection;
+        Vector3 rightViewVector = Quaternion.AngleAxis(-viewAngle / 2, Vector3.up) * lookDirection;
 
         Gizmos.DrawRay(transform.position, leftViewVector * moveRadius);
         Gizmos.DrawRay(transform.position, rightViewVector * moveRadius);
