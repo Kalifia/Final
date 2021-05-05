@@ -8,7 +8,8 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    //[SerializeField] GameObject portal;
+    [SerializeField] GameObject seal;
+    [SerializeField] GameObject gateMark;
 
     private void Awake()
     {
@@ -21,13 +22,18 @@ public class LevelManager : MonoBehaviour
         Instance = this;
     }
 
+    private void Update()
+    {
+        HowManyCrystalsLeft();
+    }
+
     public void HowManyCrystalsLeft()
     {
         Crystal[] crystals = FindObjectsOfType<Crystal>();
 
         if (crystals.Length == 1)
         {
-            CreatePortal();
+            SealDeactivate();
         }
         //выводить сколько осталось -1
     }
@@ -37,8 +43,9 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene(index);
     }
 
-    void CreatePortal()
+    void SealDeactivate()
     {
-
+        seal.gameObject.SetActive(false);
+        gateMark.gameObject.SetActive(true);
     }
 }
